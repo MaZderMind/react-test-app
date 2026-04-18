@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auto-deploy-test
+  namespace: hmb-auto-deploy-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auto-deploy-test
+  template:
+    metadata:
+      labels:
+        app: auto-deploy-test
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: auto-deploy-test
+          image: europe-west3-docker.pkg.dev/gke-seibert-k8s-small/hmb-auto-deploy-test/auto-deploy-test:latest
+          ports:
+            - containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
